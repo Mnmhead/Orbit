@@ -1,0 +1,12 @@
+#obj_creation {
+   position: absolute;
+   margin: 15px;
+   padding: 5px;
+}
+
+#animation_controls {
+   position: absolute;
+   left: 150px;
+   margin: 15px;
+   padding: 5px;
+}

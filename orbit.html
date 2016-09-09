@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>I Done Been Really Bored</title>
+      <link rel="stylesheet" type="text/css" href="orbit.css">
+      <style>
+         body {
+            margin: 0px;
+            padding: 0px;
+         }
+      </style>
+   </head>
+   <body>
+      <canvas id="canvas" width="600" height="600"></canvas>
+
+      <div id="obj_creation">
+         <input type="text" id="name" placeholder="Object Name"><br>
+         <input type="text" id="radians" placeholder="Starting Angle (rads)"><br>
+         <input type="text" id="orb_radius" placeholder="Orbit Radius"><br>
+         <input type="text" id="obj_radius" placeholder="Object Radius"><br>
+         <input type="text" id="freq" placeholder="Frequency"><br>
+       
+         <select id="parent_select">
+         </select>
+
+         <input id="create_obj" type="submit" value="Create">
+      </div>   
+      <div id="animation_controls">
+         <input type="submit" id="pause" value="Pause"><br><br>
+         <select id="connect_select1">
+         </select>
+         <select id="connect_select2">
+         </select>
+         <input type="submit" id="connect" value="Connect">
+      </div>     
+ 
+      <!-- 
+           Unfortunatley the script has to be the last line.
+           This way all the HTML5 elements load before the script runs 
+      -->
+      <script src="orbit.js"></script>      
+   </body>
+</html>

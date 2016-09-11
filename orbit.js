@@ -33,9 +33,9 @@ var P =
 // radian position, radius of orbit, radius of planet, frequency in rotations per second
 // radius is in pixels
 CEL_OBJS={ 
-     'star':[ 0, 0, 10, 0, CENTER.x, CENTER.y, null ],
-     'planet1':[ 0*PI, 200, 8, 1, null, null, 'star' ], 
-     'planet2':[ 0*PI, 100, 8, 5, null, null, 'star' ],
+     'star':[ 0, 0, 15, 0, CENTER.x, CENTER.y, null ],
+     'planet1':[ 0*PI, 200, 11, 1, null, null, 'star' ], 
+     'planet2':[ 0*PI, 94, 4, 3, null, null, 'star' ],
      /*'planet3':[ 1.5*PI, 140, 7, 0.6, null, null, 'star' ],
      'planet4':[ 0.5*PI, 37, 2, 2.8, null, null, 'star' ],
      'planet5':[ 1.7*PI, 250, 13, 0.45, null, null, 'star' ],
@@ -106,10 +106,8 @@ function orbit() {
       }
       */
 
-      drawConnections();
-
-      if( key == 'planet1' && CUR_FRAME % 2 == 0) {
-         connectObjects( object, CEL_OBJS[ 'planet2' ] );
+      if( CUR_FRAME % 3 == 0 ) {
+         drawConnections();
       }
    }
 
@@ -266,7 +264,6 @@ function updateEnvironment() {
 }
 
 // Clears the entire canvas of all marks. 
-// Resets the UPDATE_LIST.
 function clearCanvas() {
    var canvas = document.getElementById( "canvas" );
    var ctx = canvas.getContext( "2d" );
@@ -510,11 +507,11 @@ document.getElementById( "create_obj" ).onclick = function () {
    resetForm();
 };
 
-// Pause/Unpasue Button
-// Function handler for clicking Pause button
-document.getElementById( "pause" ).onclick = function () {
-   var pause_button = document.getElementById( "pause" );
-   if( ANIMATING ) {
+// Takes in a boolean as a parameter.
+// Pass in true to pause animation, false to unpause
+function pauseAnimation( pause ) {
+  var pause_button = document.getElementById( "pause" );
+   if( pause ) { 
       // transition to being paused
       pause_button.value = "Unpause";
       ANIMATING = false;
@@ -522,7 +519,13 @@ document.getElementById( "pause" ).onclick = function () {
       pause_button.value = "Pause";
       ANIMATING = true;
       animate( orbit );
-   }
+   }    
+}
+
+// Pause/Unpasue Button
+// Function handler for clicking Pause button
+document.getElementById( "pause" ).onclick = function () {
+   pauseAnimation( ANIMATING );
 }
 
 // Verifies the input of a object connect form
@@ -558,8 +561,41 @@ document.getElementById( "connect" ).onclick = function () {
    }      
 }
 
+// Removes all Celestial Objects from the collection, excpet the default 'star'
+// object.
+function clearCelestialObjects() {
+   for( var key in CEL_OBJS ) {
+      if( key != 'star' ) {
+         delete CEL_OBJS[ key ]; 
+      }
+   }
+}
+
+function clearConnections() {
+   CONNECTED_OBJS = [];
+}
+
+function emptyUpdateList() {
+   UPDATE_LIST = {};
+}
+
+// Clear button function handler called whenever 'Clear' is clicked.
+// Removes all planets, connections, leaving only the center star.
+document.getElementById( "clear" ).onclick = function () {
+   pauseAnimation( true );
+   clearCelestialObjects();
+   clearConnections();
+   emptyUpdateList();
+   registerAllObjs();   
+   pauseAnimation( false );
+}
+
 
 // IDEAS:
+
+// Implement clearing
+// Implementing changing sampling rate of connection drawings
+
 // 1. Implement a collision simulater that affects the speed of orbits.
 // 2. spawn random objects that can collide and affect the orbit of planets.
 // 3. implement an aesthetic function that can draw lines between planets orbiting

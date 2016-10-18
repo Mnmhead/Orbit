@@ -34,8 +34,8 @@ var P =
 // radius is in pixels
 CEL_OBJS={ 
      'star':[ 0, 0, 15, 0, CENTER.x, CENTER.y, null ],
-     'planet1':[ 0*PI, 200, 11, 1, null, null, 'star' ], 
-     'planet2':[ 0*PI, 94, 4, 3, null, null, 'star' ],
+    /* 'planet1':[ 0*PI, 200, 11, 1, null, null, 'star' ], 
+     'planet2':[ 0*PI, 94, 4, 3, null, null, 'star' ], */
      /*'planet3':[ 1.5*PI, 140, 7, 0.6, null, null, 'star' ],
      'planet4':[ 0.5*PI, 37, 2, 2.8, null, null, 'star' ],
      'planet5':[ 1.7*PI, 250, 13, 0.45, null, null, 'star' ],

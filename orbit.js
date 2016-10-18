@@ -58,6 +58,7 @@ var UPDATE_LIST = {};
 registerAllObjs();
 
 // Fill and init the HTML forms
+SELECT_LISTS = [ 'connect_select1', 'connect_select2', 'parent_select' ];
 initializeObjectCreationForm();
 initializeObjectConnectForm();
 
@@ -95,17 +96,7 @@ function orbit() {
       
       drawObject( object, color );       
       updateOrbit( object );  // update radians based on frequency of rotation
-     
-      /*
-      // code to connect child and parent 
-      var parent_key = object[ P.PARENT ];
-      if( parent_key != null && CUR_FRAME % 10 == 0 ) {
-         if( key != 'planet5' && key != 'planet4' ) {
-            connectObjects( object, CEL_OBJS[ parent_key ] );
-         }
-      }
-      */
-
+  
       if( CUR_FRAME % 3 == 0 ) {
          drawConnections();
       }
@@ -321,6 +312,10 @@ function saveLine( line ) {
    }
 }
 
+function clearSavedLines() {
+   LINE_SAVER = [];
+}
+
 // Grabs information about our HTML5 Canvas and fills some global
 // variables. 
 function initializeCanvas() {
@@ -336,6 +331,8 @@ function initializeCanvas() {
 
 // Sets up the Celestial Object creation form for the first time
 function initializeObjectCreationForm() {
+   clearSelect( 'parent_select' );
+
    for( key in CEL_OBJS ) {
       addObjectToSelect( key, 'parent_select' ); 
    }
@@ -343,6 +340,9 @@ function initializeObjectCreationForm() {
 
 // Sets up object connect form for the first time
 function initializeObjectConnectForm() {
+   clearSelect( 'connect_select1' );
+   clearSelect( 'connect_select2' );
+
    for( key in CEL_OBJS ) {
       addObjectToSelect( key, 'connect_select1' ); 
       addObjectToSelect( key, 'connect_select2' );
@@ -485,8 +485,17 @@ function consumeObjectCreationForm() {
 
 // Takes in a object key (object name). Adds it to the select menu for object creation.
 function addObjectToSelect( obj_key, select_name ) {
-   var parentSelect = document.getElementById( select_name ); 
-   parentSelect.options[ parentSelect.options.length ] = new Option( obj_key, obj_key );
+   var select = document.getElementById( select_name ); 
+   select.options[ select.options.length ] = new Option( obj_key, obj_key );
+}
+
+// Takes in the name of the slect form (the selects id).
+function clearSelect( select_name ) {
+   var select = document.getElementById( select_name );
+   while( select.options.length != 0 ) {
+      // We remove the front until there is no front
+      select.remove( 0 );
+   }
 }
 
 // Create Button
@@ -585,24 +594,24 @@ document.getElementById( "clear" ).onclick = function () {
    pauseAnimation( true );
    clearCelestialObjects();
    clearConnections();
+   clearSavedLines();
    emptyUpdateList();
    registerAllObjs();   
-   pauseAnimation( false );
+   // initialize the Forms once again (essentially clears the old objects from the
+   // select's options).
+   initializeObjectCreationForm();
+   initializeObjectConnectForm();   
+   // Calling animate is cheap hack to clear everything, even if we are already paused
+   animate( orbit );   
 }
 
 
 // IDEAS:
 
-// Implement clearing
-// Implementing changing sampling rate of connection drawings
+// Implementing changing sampling rate of connection drawings. HTML Slider??
 
 // 1. Implement a collision simulater that affects the speed of orbits.
 // 2. spawn random objects that can collide and affect the orbit of planets.
-// 3. implement an aesthetic function that can draw lines between planets orbiting
-//       at differing speeds. The output should look like a cool circle pattern with 
-//       little 'rays' or whatever all intersecting in a pettern in the middle of the circle
-// 4. Figure out how to save lines in a data structure to be redrawn every canvas life-cycle
-// 5. find a cool background
-// 6. make the planets cast shadows?!
-// 7. profit
-// 8. Make some html buttons that allow a user to create thier own planets and stars and whatnot
+// 3. find a cool background
+// 4. Make the sun actually generate light?
+// 5. make the planets cast shadows?!

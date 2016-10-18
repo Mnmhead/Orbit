@@ -34,8 +34,8 @@ var P =
 // radius is in pixels
 CEL_OBJS={ 
      'star':[ 0, 0, 15, 0, CENTER.x, CENTER.y, null ],
-    /* 'planet1':[ 0*PI, 200, 11, 1, null, null, 'star' ], 
-     'planet2':[ 0*PI, 94, 4, 3, null, null, 'star' ], */
+     'planet1':[ 0*PI, 200, 11, 1, null, null, 'star' ], 
+     'planet2':[ 0*PI, 94, 4, 1.625, null, null, 'star' ],
      /*'planet3':[ 1.5*PI, 140, 7, 0.6, null, null, 'star' ],
      'planet4':[ 0.5*PI, 37, 2, 2.8, null, null, 'star' ],
      'planet5':[ 1.7*PI, 250, 13, 0.45, null, null, 'star' ],
@@ -70,6 +70,7 @@ ANIMATING = true;  // tracks if we are currently in an animation loop
 
 // Stores pairs of object_keys that should be connected
 CONNECTED_OBJS = [];
+CONNECT_SAMPLE_RATE = 3;  // in number of frames to wait before sampling again
 
 
 /*
@@ -97,7 +98,7 @@ function orbit() {
       drawObject( object, color );       
       updateOrbit( object );  // update radians based on frequency of rotation
   
-      if( CUR_FRAME % 3 == 0 ) {
+      if( CUR_FRAME % CONNECT_SAMPLE_RATE == 0 ) {
          drawConnections();
       }
    }
@@ -565,8 +566,13 @@ document.getElementById( "connect" ).onclick = function () {
       // Display error message
       alert( formOutput );
    } else {
+      // Update sample rate
+      var sample_rate = document.getElementById( "sample_rate" ).value;
+      if( sample_rate != "" ) {
+         CONNECT_SAMPLE_RATE = sample_rate;
+      }
       // Add two objects in drop-down selects as a new pair in the CONNECTED_OBJS
-      CONNECTED_OBJS.push( formOutput ); 
+      CONNECTED_OBJS.push( formOutput );
    }      
 }
 
@@ -605,6 +611,13 @@ document.getElementById( "clear" ).onclick = function () {
    animate( orbit );   
 }
 
+document.getElementById( "clear_connections" ).onclick = function () {
+   pauseAnimation( true );
+   clearConnections();
+   clearSavedLines();
+   // Calling animate is cheap hack to clear everything, even if we are already paused
+   animate( orbit );     
+}
 
 // IDEAS:
 

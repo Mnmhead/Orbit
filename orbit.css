@@ -1,11 +1,11 @@
 #obj_creation {
-   position: absolute;
+   position: static;
    margin: 15px;
    padding: 5px;
 }
 
 #animation_controls {
-   position: absolute;
+   position: static;
    left: 250px;
    margin: 15px;
    padding: 5px;

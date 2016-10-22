@@ -36,16 +36,16 @@ CEL_OBJS={
      'star':[ 0, 0, 15, 0, CENTER.x, CENTER.y, null ],
      'planet1':[ 0*PI, 200, 11, 1, null, null, 'star' ], 
      'planet2':[ 0*PI, 94, 4, 3, null, null, 'star' ],
-     /*'planet3':[ 1.5*PI, 140, 7, 0.6, null, null, 'star' ],
+     'planet3':[ 1.5*PI, 140, 7, 0.6, null, null, 'star' ],
      'planet4':[ 0.5*PI, 37, 2, 2.8, null, null, 'star' ],
      'planet5':[ 1.7*PI, 250, 13, 0.45, null, null, 'star' ],
      'planet6':[ 12*PI, 300, 7, 0.3, null, null, 'star' ],
      'satellite1':[ 0.3*PI, 20, 3, 1.5, null, null, 'planet3' ],
      'satellite2':[ 0*PI, 21, 4, 4.2, null, null, 'planet5' ],
-     // 'satellite3':[ 3*PI, 60, 10, 1.3, null, null, 'planet5' ],
+     'satellite3':[ 3*PI, 60, 10, 1.3, null, null, 'planet5' ],
      'satellite4':[ 0.9*PI, 15, 2, 10, null, null, 'planet1' ]
-     //'satellite5':[ 0*PI, 25, 5, 2, null, null, 'satellite3' ],
-     //'satellite6':[ 0*PI, 9, 2, 3, null, null, 'satellite5' ] */
+     'satellite5':[ 0*PI, 25, 5, 2, null, null, 'satellite3' ],
+     'satellite6':[ 0*PI, 9, 2, 3, null, null, 'satellite5' ]
 };
 
 /*
@@ -95,17 +95,7 @@ function orbit() {
       
       drawObject( object, color );       
       updateOrbit( object );  // update radians based on frequency of rotation
-     
-      /*
-      // code to connect child and parent 
-      var parent_key = object[ P.PARENT ];
-      if( parent_key != null && CUR_FRAME % 10 == 0 ) {
-         if( key != 'planet5' && key != 'planet4' ) {
-            connectObjects( object, CEL_OBJS[ parent_key ] );
-         }
-      }
-      */
-
+    
       if( CUR_FRAME % 3 == 0 ) {
          drawConnections();
       }
@@ -319,6 +309,10 @@ function saveLine( line ) {
    if( LINE_SAVER.length < MAX_NUM_LINES ) {
       LINE_SAVER.push( line );
    }
+}
+
+function clearSavedLines() {
+   LINE_SAVER = [];
 }
 
 // Grabs information about our HTML5 Canvas and fills some global
@@ -585,11 +579,15 @@ document.getElementById( "clear" ).onclick = function () {
    pauseAnimation( true );
    clearCelestialObjects();
    clearConnections();
+   clearSavedLines();
    emptyUpdateList();
    registerAllObjs();   
-   pauseAnimation( false );
 }
 
+
+//TODO:
+// still need to clear selection lists, when clear is called. Maybe there is a better way to implement the clear function?? 
+// Like perhaps we can jst reload the page...hmmmm??
 
 // IDEAS:
 

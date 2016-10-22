@@ -58,6 +58,7 @@ var UPDATE_LIST = {};
 registerAllObjs();
 
 // Fill and init the HTML forms
+SELECT_LISTS = [ 'connect_select1', 'connect_select2', 'parent_select' ];
 initializeObjectCreationForm();
 initializeObjectConnectForm();
 
@@ -69,6 +70,7 @@ ANIMATING = true;  // tracks if we are currently in an animation loop
 
 // Stores pairs of object_keys that should be connected
 CONNECTED_OBJS = [];
+CONNECT_SAMPLE_RATE = 3;  // in number of frames to wait before sampling again
 
 
 /*
@@ -96,7 +98,7 @@ function orbit() {
       drawObject( object, color );       
       updateOrbit( object );  // update radians based on frequency of rotation
     
-      if( CUR_FRAME % 3 == 0 ) {
+      if( CUR_FRAME % CONNECT_SAMPLE_RATE == 0 ) {
          drawConnections();
       }
    }
@@ -330,6 +332,8 @@ function initializeCanvas() {
 
 // Sets up the Celestial Object creation form for the first time
 function initializeObjectCreationForm() {
+   clearSelect( 'parent_select' );
+
    for( key in CEL_OBJS ) {
       addObjectToSelect( key, 'parent_select' ); 
    }
@@ -337,6 +341,9 @@ function initializeObjectCreationForm() {
 
 // Sets up object connect form for the first time
 function initializeObjectConnectForm() {
+   clearSelect( 'connect_select1' );
+   clearSelect( 'connect_select2' );
+
    for( key in CEL_OBJS ) {
       addObjectToSelect( key, 'connect_select1' ); 
       addObjectToSelect( key, 'connect_select2' );
@@ -479,8 +486,17 @@ function consumeObjectCreationForm() {
 
 // Takes in a object key (object name). Adds it to the select menu for object creation.
 function addObjectToSelect( obj_key, select_name ) {
-   var parentSelect = document.getElementById( select_name ); 
-   parentSelect.options[ parentSelect.options.length ] = new Option( obj_key, obj_key );
+   var select = document.getElementById( select_name ); 
+   select.options[ select.options.length ] = new Option( obj_key, obj_key );
+}
+
+// Takes in the name of the slect form (the selects id).
+function clearSelect( select_name ) {
+   var select = document.getElementById( select_name );
+   while( select.options.length != 0 ) {
+      // We remove the front until there is no front
+      select.remove( 0 );
+   }
 }
 
 // Create Button
@@ -550,8 +566,13 @@ document.getElementById( "connect" ).onclick = function () {
       // Display error message
       alert( formOutput );
    } else {
+      // Update sample rate
+      var sample_rate = document.getElementById( "sample_rate" ).value;
+      if( sample_rate != "" ) {
+         CONNECT_SAMPLE_RATE = sample_rate;
+      }
       // Add two objects in drop-down selects as a new pair in the CONNECTED_OBJS
-      CONNECTED_OBJS.push( formOutput ); 
+      CONNECTED_OBJS.push( formOutput );
    }      
 }
 
@@ -582,8 +603,21 @@ document.getElementById( "clear" ).onclick = function () {
    clearSavedLines();
    emptyUpdateList();
    registerAllObjs();   
+   // initialize the Forms once again (essentially clears the old objects from the
+   // select's options).
+   initializeObjectCreationForm();
+   initializeObjectConnectForm();   
+   // Calling animate is cheap hack to clear everything, even if we are already paused
+   animate( orbit );   
 }
 
+document.getElementById( "clear_connections" ).onclick = function () {
+   pauseAnimation( true );
+   clearConnections();
+   clearSavedLines();
+   // Calling animate is cheap hack to clear everything, even if we are already paused
+   animate( orbit );     
+}
 
 //TODO:
 // still need to clear selection lists, when clear is called. Maybe there is a better way to implement the clear function?? 
@@ -591,16 +625,10 @@ document.getElementById( "clear" ).onclick = function () {
 
 // IDEAS:
 
-// Implement clearing
-// Implementing changing sampling rate of connection drawings
+// Implementing changing sampling rate of connection drawings. HTML Slider??
 
 // 1. Implement a collision simulater that affects the speed of orbits.
 // 2. spawn random objects that can collide and affect the orbit of planets.
-// 3. implement an aesthetic function that can draw lines between planets orbiting
-//       at differing speeds. The output should look like a cool circle pattern with 
-//       little 'rays' or whatever all intersecting in a pettern in the middle of the circle
-// 4. Figure out how to save lines in a data structure to be redrawn every canvas life-cycle
-// 5. find a cool background
-// 6. make the planets cast shadows?!
-// 7. profit
-// 8. Make some html buttons that allow a user to create thier own planets and stars and whatnot
+// 3. find a cool background
+// 4. Make the sun actually generate light?
+// 5. make the planets cast shadows?!

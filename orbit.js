@@ -43,7 +43,7 @@ CEL_OBJS={
      'satellite1':[ 0.3*PI, 20, 3, 1.5, null, null, 'planet3' ],
      'satellite2':[ 0*PI, 21, 4, 4.2, null, null, 'planet5' ],
      'satellite3':[ 3*PI, 60, 10, 1.3, null, null, 'planet5' ],
-     'satellite4':[ 0.9*PI, 15, 2, 10, null, null, 'planet1' ]
+     'satellite4':[ 0.9*PI, 15, 2, 10, null, null, 'planet1' ],
      'satellite5':[ 0*PI, 25, 5, 2, null, null, 'satellite3' ],
      'satellite6':[ 0*PI, 9, 2, 3, null, null, 'satellite5' ]
 };

@@ -80,7 +80,7 @@ function orbit() {
    // Clear Canvas of previous marks then re-draw anything essential
    clearCanvas();
    clearUpdateList();
-   drawSavedMarks();
+   //drawSavedMarks();
 
    for( var key in CEL_OBJS ) {
       var object = CEL_OBJS[ key ];
@@ -136,9 +136,9 @@ function drawCenteredPlanet( x, y, planet, color ) {
 
 // Takes in two points as parameters and draws a line from point 1 to 2.
 // Color is an optional argument.
-function drawLine( p1, p2, color ) {
+function drawLine( p1, p2, canvas, color ) {
    var color = color || 'black';
-   var canvas = document.getElementById( "canvas" );
+   var canvas = document.getElementById( canvas );
    var ctx = canvas.getContext( "2d" );
 
    ctx.beginPath();
@@ -278,7 +278,7 @@ function drawSavedMarks() {
    // current background image is gross...find a better one
    // drawBackground();
    for( var line in LINE_SAVER ) {
-      drawLine( LINE_SAVER[ line ].p1, LINE_SAVER[ line ].p2, LINE_SAVER[ line ].color );
+      drawLine( LINE_SAVER[ line ].p1, LINE_SAVER[ line ].p2, "canvas", LINE_SAVER[ line ].color );
    }
 }
 
@@ -321,6 +321,10 @@ function clearSavedLines() {
 // variables. 
 function initializeCanvas() {
    var canvas = document.getElementById( "canvas" );
+   var background_canvas = document.getElementById( "background_canvas" );
+   assert( canvas.height == background_canvas.height );
+   assert( canvas.width == background_canvas.width );
+
    return {
       HEIGHT: canvas.height,
       WIDTH: canvas.width,
@@ -393,7 +397,7 @@ function connectObjects( obj1, obj2 ) {
    // Format a line 'struct' 
    var line = { p1:obj1_pos, p2:obj2_pos }; //, color:color};
    // Draw and save the line
-   drawLine( obj1_pos, obj2_pos ); //, color );
+   drawLine( obj1_pos, obj2_pos, "background_canvas" ); //, color );
    saveLine( line );
 }
 

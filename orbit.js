@@ -322,8 +322,8 @@ function clearSavedLines() {
 function initializeCanvas() {
    var canvas = document.getElementById( "canvas" );
    var background_canvas = document.getElementById( "background_canvas" );
-   assert( canvas.height == background_canvas.height );
-   assert( canvas.width == background_canvas.width );
+   // assert( canvas.height == background_canvas.height );
+   // assert( canvas.width == background_canvas.width );
 
    return {
       HEIGHT: canvas.height,

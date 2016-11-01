@@ -136,9 +136,9 @@ function drawCenteredPlanet( x, y, planet, color ) {
 
 // Takes in two points as parameters and draws a line from point 1 to 2.
 // Color is an optional argument.
-function drawLine( p1, p2, canvas, color ) {
+function drawLine( p1, p2, canv, color ) {
    var color = color || 'black';
-   var canvas = document.getElementById( canvas );
+   var canvas = document.getElementById( canv );
    var ctx = canvas.getContext( "2d" );
 
    ctx.beginPath();
@@ -398,7 +398,7 @@ function connectObjects( obj1, obj2 ) {
    var line = { p1:obj1_pos, p2:obj2_pos }; //, color:color};
    // Draw and save the line
    drawLine( obj1_pos, obj2_pos, "background_canvas" ); //, color );
-   saveLine( line );
+   // saveLine( line );
 }
 
 function getRandomColor() {

@@ -1,16 +1,3 @@
-#obj_creation {
-   position: static;
-   margin: 15px;
-   padding: 5px;
-}
-
-#animation_controls {
-   position: static;
-   left: 250px;
-   margin: 15px;
-   padding: 5px;
-}
-
 canvas {
    position:absolute;
    left:0px;

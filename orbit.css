@@ -1,3 +1,18 @@
+#obj_creation {
+   position: relative;
+   top: 600px;
+   margin: 15px;
+   padding: 5px;
+}
+
+#animation_controls {
+   position: relative;
+   top: 600px;
+   left: 250px;
+   margin: 15px;
+   padding: 5px;
+}
+
 canvas {
    position:absolute;
    left:0px;

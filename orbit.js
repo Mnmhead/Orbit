@@ -569,6 +569,7 @@ function clearCelestialObjects() {
 
 function clearConnections() {
    CONNECTED_OBJS = [];
+   clearCanvas( "background_canvas" );
 }
 
 function emptyUpdateList() {
@@ -594,7 +595,6 @@ document.getElementById( "clear" ).onclick = function () {
 document.getElementById( "clear_connections" ).onclick = function () {
    pauseAnimation( true );
    clearConnections();
-   clearCanvas( "background_canvas" );
    // Calling animate is cheap hack to clear everything, even if we are already paused
    animate( orbit );     
 }

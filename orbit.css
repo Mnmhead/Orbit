@@ -10,3 +10,17 @@
    margin: 15px;
    padding: 5px;
 }
+
+canvas {
+   position:absolute;
+   left:0px;
+   top:0px;
+}
+
+#canvas {
+   z-index: 2;
+}
+
+#background_canvas {
+   z-index: 1;
+}

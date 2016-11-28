@@ -62,10 +62,6 @@ SELECT_LISTS = [ 'connect_select1', 'connect_select2', 'parent_select' ];
 initializeObjectCreationForm();
 initializeObjectConnectForm();
 
-// We save our beautiful lines here, use the push() method to add saved lines
-LINE_SAVER = [];
-MAX_NUM_LINES = 5000;
-
 ANIMATING = true;  // tracks if we are currently in an animation loop
 
 // Stores pairs of object_keys that should be connected
@@ -78,9 +74,8 @@ CONNECT_SAMPLE_RATE = 3;  // in number of frames to wait before sampling again
  */
 function orbit() {	
    // Clear Canvas of previous marks then re-draw anything essential
-   clearCanvas();
+   clearCanvas( "canvas" );
    clearUpdateList();
-   //drawSavedMarks();
 
    for( var key in CEL_OBJS ) {
       var object = CEL_OBJS[ key ];
@@ -256,8 +251,8 @@ function updateEnvironment() {
 }
 
 // Clears the entire canvas of all marks. 
-function clearCanvas() {
-   var canvas = document.getElementById( "canvas" );
+function clearCanvas( canv ) {
+   var canvas = document.getElementById( canv );
    var ctx = canvas.getContext( "2d" );
    var width = canvas.width;
    var height = canvas.height;
@@ -271,14 +266,6 @@ function clearUpdateList() {
    // Clears the UPDATE_LIST 
    for( var drawing in UPDATE_LIST ) {
       UPDATE_LIST[ drawing ] = false;
-   }
-}
-
-function drawSavedMarks() {
-   // current background image is gross...find a better one
-   // drawBackground();
-   for( var line in LINE_SAVER ) {
-      drawLine( LINE_SAVER[ line ].p1, LINE_SAVER[ line ].p2, "canvas", LINE_SAVER[ line ].color );
    }
 }
 
@@ -305,16 +292,6 @@ function registerAllObjs() {
    for( var key in CEL_OBJS ) {
       registerObject( key );
    }
-}
-
-function saveLine( line ) {
-   if( LINE_SAVER.length < MAX_NUM_LINES ) {
-      LINE_SAVER.push( line );
-   }
-}
-
-function clearSavedLines() {
-   LINE_SAVER = [];
 }
 
 // Grabs information about our HTML5 Canvas and fills some global
@@ -604,7 +581,6 @@ document.getElementById( "clear" ).onclick = function () {
    pauseAnimation( true );
    clearCelestialObjects();
    clearConnections();
-   clearSavedLines();
    emptyUpdateList();
    registerAllObjs();   
    // initialize the Forms once again (essentially clears the old objects from the
@@ -618,7 +594,7 @@ document.getElementById( "clear" ).onclick = function () {
 document.getElementById( "clear_connections" ).onclick = function () {
    pauseAnimation( true );
    clearConnections();
-   clearSavedLines();
+   clearCanvas( "background_canvas" );
    // Calling animate is cheap hack to clear everything, even if we are already paused
    animate( orbit );     
 }

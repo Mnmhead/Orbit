@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>I Done Been Really Bored</title>
+      <title>Orbit Pattern</title>
       <link rel="stylesheet" type="text/css" href="orbit.css">
       <style>
          body {
@@ -12,6 +12,7 @@
    </head>
    <body>
       <canvas id="canvas" width="600" height="600"></canvas>
+      <canvas id="background_canvas" width="600" height="600"></canvas>
 
       <div id="obj_creation">
          <input type="text" id="name" placeholder="Object Name"><br>
@@ -26,16 +27,18 @@
          <input id="create_obj" type="submit" value="Create">
       </div>   
       <div id="animation_controls">
-         <input type="submit" id="pause" value="Pause"><br><br>
+         <input class="button" type="submit" id="pause" value="Pause">
+         <input class="button" type="submit" id="clear" value="Clear"><br><br>
          <select id="connect_select1">
          </select>
          <select id="connect_select2">
          </select>
-         <input type="submit" id="connect" value="Connect">
+         <input class="button" type="submit" id="connect" value="Connect"><br>
+         <input class="button" type="submit" id="clear_connections" value="Clear Connect"><br>
+         <input class="button" type="text" id="sample_rate" placeholder="Sample Rate (in frames)">
       </div>     
- 
       <!-- 
-           Unfortunatley the script has to be the last line.
+           Unfortunatley the script has to be the last line...
            This way all the HTML5 elements load before the script runs 
       -->
       <script src="orbit.js"></script>      

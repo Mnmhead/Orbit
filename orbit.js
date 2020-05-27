@@ -33,19 +33,19 @@ var P =
 // radian position, radius of orbit, radius of planet, frequency in rotations per second
 // radius is in pixels
 CEL_OBJS={ 
-     'star':[ 0, 0, 10, 0, CENTER.x, CENTER.y, null ],
-     'planet1':[ 0*PI, 200, 8, 1, null, null, 'star' ], 
-     'planet2':[ 0*PI, 100, 8, 5, null, null, 'star' ],
-     /*'planet3':[ 1.5*PI, 140, 7, 0.6, null, null, 'star' ],
+     'star':[ 0, 0, 15, 0, CENTER.x, CENTER.y, null ],
+     'planet1':[ 0*PI, 200, 11, 1, null, null, 'star' ], 
+     'planet2':[ 0*PI, 94, 4, 3, null, null, 'star' ],
+     'planet3':[ 1.5*PI, 140, 7, 0.6, null, null, 'star' ],
      'planet4':[ 0.5*PI, 37, 2, 2.8, null, null, 'star' ],
      'planet5':[ 1.7*PI, 250, 13, 0.45, null, null, 'star' ],
      'planet6':[ 12*PI, 300, 7, 0.3, null, null, 'star' ],
      'satellite1':[ 0.3*PI, 20, 3, 1.5, null, null, 'planet3' ],
      'satellite2':[ 0*PI, 21, 4, 4.2, null, null, 'planet5' ],
-     // 'satellite3':[ 3*PI, 60, 10, 1.3, null, null, 'planet5' ],
-     'satellite4':[ 0.9*PI, 15, 2, 10, null, null, 'planet1' ]
-     //'satellite5':[ 0*PI, 25, 5, 2, null, null, 'satellite3' ],
-     //'satellite6':[ 0*PI, 9, 2, 3, null, null, 'satellite5' ] */
+     'satellite3':[ 3*PI, 60, 10, 1.3, null, null, 'planet5' ],
+     'satellite4':[ 0.9*PI, 15, 2, 10, null, null, 'planet1' ],
+     'satellite5':[ 0*PI, 25, 5, 2, null, null, 'satellite3' ],
+     'satellite6':[ 0*PI, 9, 2, 3, null, null, 'satellite5' ]
 };
 
 /*
@@ -58,17 +58,15 @@ var UPDATE_LIST = {};
 registerAllObjs();
 
 // Fill and init the HTML forms
+SELECT_LISTS = [ 'connect_select1', 'connect_select2', 'parent_select' ];
 initializeObjectCreationForm();
 initializeObjectConnectForm();
-
-// We save our beautiful lines here, use the push() method to add saved lines
-LINE_SAVER = [];
-MAX_NUM_LINES = 5000;
 
 ANIMATING = true;  // tracks if we are currently in an animation loop
 
 // Stores pairs of object_keys that should be connected
 CONNECTED_OBJS = [];
+CONNECT_SAMPLE_RATE = 3;  // in number of frames to wait before sampling again
 
 
 /*
@@ -76,9 +74,8 @@ CONNECTED_OBJS = [];
  */
 function orbit() {	
    // Clear Canvas of previous marks then re-draw anything essential
-   clearCanvas();
+   clearCanvas( "canvas" );
    clearUpdateList();
-   drawSavedMarks();
 
    for( var key in CEL_OBJS ) {
       var object = CEL_OBJS[ key ];
@@ -95,21 +92,9 @@ function orbit() {
       
       drawObject( object, color );       
       updateOrbit( object );  // update radians based on frequency of rotation
-     
-      /*
-      // code to connect child and parent 
-      var parent_key = object[ P.PARENT ];
-      if( parent_key != null && CUR_FRAME % 10 == 0 ) {
-         if( key != 'planet5' && key != 'planet4' ) {
-            connectObjects( object, CEL_OBJS[ parent_key ] );
-         }
-      }
-      */
-
-      drawConnections();
-
-      if( key == 'planet1' && CUR_FRAME % 2 == 0) {
-         connectObjects( object, CEL_OBJS[ 'planet2' ] );
+    
+      if( CUR_FRAME % CONNECT_SAMPLE_RATE == 0 ) {
+         drawConnections();
       }
    }
 
@@ -146,9 +131,9 @@ function drawCenteredPlanet( x, y, planet, color ) {
 
 // Takes in two points as parameters and draws a line from point 1 to 2.
 // Color is an optional argument.
-function drawLine( p1, p2, color ) {
+function drawLine( p1, p2, canv, color ) {
    var color = color || 'black';
-   var canvas = document.getElementById( "canvas" );
+   var canvas = document.getElementById( canv );
    var ctx = canvas.getContext( "2d" );
 
    ctx.beginPath();
@@ -266,9 +251,8 @@ function updateEnvironment() {
 }
 
 // Clears the entire canvas of all marks. 
-// Resets the UPDATE_LIST.
-function clearCanvas() {
-   var canvas = document.getElementById( "canvas" );
+function clearCanvas( canv ) {
+   var canvas = document.getElementById( canv );
    var ctx = canvas.getContext( "2d" );
    var width = canvas.width;
    var height = canvas.height;
@@ -282,14 +266,6 @@ function clearUpdateList() {
    // Clears the UPDATE_LIST 
    for( var drawing in UPDATE_LIST ) {
       UPDATE_LIST[ drawing ] = false;
-   }
-}
-
-function drawSavedMarks() {
-   // current background image is gross...find a better one
-   // drawBackground();
-   for( var line in LINE_SAVER ) {
-      drawLine( LINE_SAVER[ line ].p1, LINE_SAVER[ line ].p2, LINE_SAVER[ line ].color );
    }
 }
 
@@ -318,16 +294,14 @@ function registerAllObjs() {
    }
 }
 
-function saveLine( line ) {
-   if( LINE_SAVER.length < MAX_NUM_LINES ) {
-      LINE_SAVER.push( line );
-   }
-}
-
 // Grabs information about our HTML5 Canvas and fills some global
 // variables. 
 function initializeCanvas() {
    var canvas = document.getElementById( "canvas" );
+   var background_canvas = document.getElementById( "background_canvas" );
+   // assert( canvas.height == background_canvas.height );
+   // assert( canvas.width == background_canvas.width );
+
    return {
       HEIGHT: canvas.height,
       WIDTH: canvas.width,
@@ -339,6 +313,8 @@ function initializeCanvas() {
 
 // Sets up the Celestial Object creation form for the first time
 function initializeObjectCreationForm() {
+   clearSelect( 'parent_select' );
+
    for( key in CEL_OBJS ) {
       addObjectToSelect( key, 'parent_select' ); 
    }
@@ -346,6 +322,9 @@ function initializeObjectCreationForm() {
 
 // Sets up object connect form for the first time
 function initializeObjectConnectForm() {
+   clearSelect( 'connect_select1' );
+   clearSelect( 'connect_select2' );
+
    for( key in CEL_OBJS ) {
       addObjectToSelect( key, 'connect_select1' ); 
       addObjectToSelect( key, 'connect_select2' );
@@ -395,8 +374,8 @@ function connectObjects( obj1, obj2 ) {
    // Format a line 'struct' 
    var line = { p1:obj1_pos, p2:obj2_pos }; //, color:color};
    // Draw and save the line
-   drawLine( obj1_pos, obj2_pos ); //, color );
-   saveLine( line );
+   drawLine( obj1_pos, obj2_pos, "background_canvas" ); //, color );
+   // saveLine( line );
 }
 
 function getRandomColor() {
@@ -488,8 +467,17 @@ function consumeObjectCreationForm() {
 
 // Takes in a object key (object name). Adds it to the select menu for object creation.
 function addObjectToSelect( obj_key, select_name ) {
-   var parentSelect = document.getElementById( select_name ); 
-   parentSelect.options[ parentSelect.options.length ] = new Option( obj_key, obj_key );
+   var select = document.getElementById( select_name ); 
+   select.options[ select.options.length ] = new Option( obj_key, obj_key );
+}
+
+// Takes in the name of the slect form (the selects id).
+function clearSelect( select_name ) {
+   var select = document.getElementById( select_name );
+   while( select.options.length != 0 ) {
+      // We remove the front until there is no front
+      select.remove( 0 );
+   }
 }
 
 // Create Button
@@ -510,11 +498,11 @@ document.getElementById( "create_obj" ).onclick = function () {
    resetForm();
 };
 
-// Pause/Unpasue Button
-// Function handler for clicking Pause button
-document.getElementById( "pause" ).onclick = function () {
-   var pause_button = document.getElementById( "pause" );
-   if( ANIMATING ) {
+// Takes in a boolean as a parameter.
+// Pass in true to pause animation, false to unpause
+function pauseAnimation( pause ) {
+  var pause_button = document.getElementById( "pause" );
+   if( pause ) { 
       // transition to being paused
       pause_button.value = "Unpause";
       ANIMATING = false;
@@ -522,7 +510,13 @@ document.getElementById( "pause" ).onclick = function () {
       pause_button.value = "Pause";
       ANIMATING = true;
       animate( orbit );
-   }
+   }    
+}
+
+// Pause/Unpasue Button
+// Function handler for clicking Pause button
+document.getElementById( "pause" ).onclick = function () {
+   pauseAnimation( ANIMATING );
 }
 
 // Verifies the input of a object connect form
@@ -553,20 +547,68 @@ document.getElementById( "connect" ).onclick = function () {
       // Display error message
       alert( formOutput );
    } else {
+      // Update sample rate
+      var sample_rate = document.getElementById( "sample_rate" ).value;
+      if( sample_rate != "" ) {
+         CONNECT_SAMPLE_RATE = sample_rate;
+      }
       // Add two objects in drop-down selects as a new pair in the CONNECTED_OBJS
-      CONNECTED_OBJS.push( formOutput ); 
+      CONNECTED_OBJS.push( formOutput );
    }      
 }
 
+// Removes all Celestial Objects from the collection, excpet the default 'star'
+// object.
+function clearCelestialObjects() {
+   for( var key in CEL_OBJS ) {
+      if( key != 'star' ) {
+         delete CEL_OBJS[ key ]; 
+      }
+   }
+}
+
+function clearConnections() {
+   CONNECTED_OBJS = [];
+   clearCanvas( "background_canvas" );
+}
+
+function emptyUpdateList() {
+   UPDATE_LIST = {};
+}
+
+// Clear button function handler called whenever 'Clear' is clicked.
+// Removes all planets, connections, leaving only the center star.
+document.getElementById( "clear" ).onclick = function () {
+   pauseAnimation( true );
+   clearCelestialObjects();
+   clearConnections();
+   emptyUpdateList();
+   registerAllObjs();   
+   // initialize the Forms once again (essentially clears the old objects from the
+   // select's options).
+   initializeObjectCreationForm();
+   initializeObjectConnectForm();   
+   // Calling animate is cheap hack to clear everything, even if we are already paused
+   animate( orbit );   
+}
+
+document.getElementById( "clear_connections" ).onclick = function () {
+   pauseAnimation( true );
+   clearConnections();
+   // Calling animate is cheap hack to clear everything, even if we are already paused
+   animate( orbit );     
+}
+
+//TODO:
+// still need to clear selection lists, when clear is called. Maybe there is a better way to implement the clear function?? 
+// Like perhaps we can jst reload the page...hmmmm??
 
 // IDEAS:
+
+// Implementing changing sampling rate of connection drawings. HTML Slider??
+
 // 1. Implement a collision simulater that affects the speed of orbits.
 // 2. spawn random objects that can collide and affect the orbit of planets.
-// 3. implement an aesthetic function that can draw lines between planets orbiting
-//       at differing speeds. The output should look like a cool circle pattern with 
-//       little 'rays' or whatever all intersecting in a pettern in the middle of the circle
-// 4. Figure out how to save lines in a data structure to be redrawn every canvas life-cycle
-// 5. find a cool background
-// 6. make the planets cast shadows?!
-// 7. profit
-// 8. Make some html buttons that allow a user to create thier own planets and stars and whatnot
+// 3. find a cool background
+// 4. Make the sun actually generate light?
+// 5. make the planets cast shadows?!

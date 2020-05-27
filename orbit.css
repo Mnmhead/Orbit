@@ -1,12 +1,28 @@
 #obj_creation {
-   position: absolute;
+   position: relative;
+   top: 600px;
    margin: 15px;
    padding: 5px;
 }
 
 #animation_controls {
-   position: absolute;
-   left: 150px;
+   position: relative;
+   top: 474px;
+   left: 230px;
    margin: 15px;
    padding: 5px;
+}
+
+canvas {
+   position:absolute;
+   left:0px;
+   top:0px;
+}
+
+#canvas {
+   z-index: 2;
+}
+
+#background_canvas {
+   z-index: 1;
 }
